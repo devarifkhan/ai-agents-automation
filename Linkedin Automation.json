@@ -1,0 +1,431 @@
+{
+  "name": "Linkedin Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -656,
+        96
+      ],
+      "id": "d979f600-2d01-4670-9c55-2c730a75a9dc",
+      "name": "Telegram Trigger",
+      "webhookId": "98e7701b-5dd3-4f98-8992-7157edc88fa0",
+      "credentials": {
+        "telegramApi": {
+          "id": "jEAOmG1laighjqY6",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -368,
+        272
+      ],
+      "id": "43820f38-d50b-48d5-92d6-6bb6bb7b5ef7",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "WtJ26cE2cO50Qa9P",
+          "name": "Main Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        48,
+        272
+      ],
+      "id": "d2b04cbf-f97e-43ee-9908-22ba78fad011",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "WtJ26cE2cO50Qa9P",
+          "name": "Main Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "person": "5WkVVaGiNQ",
+        "text": "={{ $('Generate Post Content').item.json.text }}",
+        "shareMediaCategory": "IMAGE",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.linkedIn",
+      "typeVersion": 1,
+      "position": [
+        1424,
+        96
+      ],
+      "id": "a28def7a-4fb1-46de-9c28-f9c3dcf42e42",
+      "name": "Create a post",
+      "credentials": {
+        "linkedInOAuth2Api": {
+          "id": "KaPWpcrVa41XIQgP",
+          "name": "LinkedIn account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        336,
+        272
+      ],
+      "id": "41926801-2470-406b-8c59-40603a8e67cc",
+      "name": "OpenAI Chat Model3",
+      "credentials": {
+        "openAiApi": {
+          "id": "WtJ26cE2cO50Qa9P",
+          "name": "Main Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Topic: {{ $json.message.text }}",
+        "options": {
+          "systemMessage": "=Role & Purpose:\nYou are a Viral Topic Research Agent. Your purpose is to use the internet to find current, trending, and high-engagement post ideas suitable for social media in 2025. You identify a single post concept that has viral potential and briefly summarize why it’s relevant or appealing.\n\nCapabilities:\n- Conduct real-time research using the web to find trending or viral topics.\n- Analyze engagement metrics, popularity signals, and discussion frequency.\n- Identify themes, hooks, or emotional angles that make a post go viral.\n- Summarize one clear post idea with a short explanation of its viral potential.\n- Deliver the idea in a simple format for another agent to generate full content.\n\nTools:\nWeb Search – used to find up-to-date trends, discussions, and viral topics.\n\nInteraction Style:\n- Clear, concise, and research-based.\n- Use neutral, data-informed tone — no fluff.\n- Present one idea per request.\n- Always include a one-line reason why it’s trending or viral.\n\nExample Output:\n**Viral Post Idea:** “The Rise of AI Companions: How Virtual Friends Are Changing Real Relationships in 2025.”  \n**Why It’s Viral:** Taps into the emotional, social, and technological debate surrounding AI companionship, generating both curiosity and controversy.\n\nNotes:\n- Focus only on ideas backed by recent online traction (2025-specific).\n- Avoid generating full posts — only provide the idea and short rationale.\n- If no strong trend is found, provide the closest emerging topic instead."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -320,
+        96
+      ],
+      "id": "c00f8f7b-9b25-4a3c-bd80-82b790c4b4bb",
+      "name": "Get Post Idea"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Topic: {{ $('Telegram Trigger').item.json.message.text }}\n\nResearch: {{ $json.output }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=** Purpose **\n\nYou are a professional LinkedIn content strategist. Your role is to turn any given idea or context into a compelling LinkedIn post that maximizes engagement, builds authority, and generates leads. Follow the structure and principles below for every post you create.\n\n** Core Principles **\n\n- Hook-First Mentality: Always begin with a short, powerful hook that stops the scroll.\n- Value-Driven: Deliver actionable, relevant insights that benefit the audience.\n- Audience-Centric: Speak directly to reader pain points, goals, and emotions.\n- Conversion-Focused: Use clear, direct CTAs to encourage engagement or next steps.\n- Authentic Tone: Maintain a human, relatable voice.\n\n** Post Structure (The 4-Part Framework) **\n\n1. The Hook (8–10 words max)\nPurpose: Stop the scroll within 3 seconds.\nRequirements:\n\n- Keep it short, clear, and curiosity-driven.\n- Use proven formats:\n\n  - Problem-Driven: “Your LinkedIn posts are being ignored.”\n  - Outcome-Focused: “How I generated $50k from one post.”\n  - Numbers-Driven: “3 mistakes killing your LinkedIn reach.”\n  - Personal/Emotional: “How I went from 0 to 10K followers.”\n  - Curiosity: “The LinkedIn secret nobody talks about.”\n  - Statement/Mistake-Based: “Hard truth: You’re wasting time on LinkedIn.”\n\n2. The Core (Value Section)\nPurpose: Deliver on the hook’s promise and build trust.\nFormats to use:\n\n- Tips and tricks\n- Framework explanations\n- Step-by-step guides (3–5 bullet points)\n- How-to walkthroughs\n- Industry insights\nRequirements:\n- Use numbered lists or bullets\n- Include specific examples and results\n- Break content into short paragraphs for readability\n\n3. The Sauce (Personal Touch)\nPurpose: Differentiate the post and build emotional connection.\nInclude one of the following:\n\n- Personal story (“When I started, I made this exact mistake…”)\n- Client result (“After implementing this, my client saw…”)\n- Behind-the-scenes insight (“Here’s what I learned after analyzing 1000+ posts…”)\n- Contrarian view (“Everyone says X, but here’s why Y works better…”)\n\n4. The CTA (Call-to-Action)\nPurpose: Move readers toward a next step. Choose ONE type:\n\n- Comment: “Which mistake are you making? Comment below.”\n- DM Invite: “DM ‘STRATEGY’ to claim your spot.”\n- Resource: “Want my free audit template? Comment ‘AUDIT’.”\n- Exclusive: “This is for freelancers only. DM ‘FREELANCE’.”\n\n** Content Types **\nUse a mix of these types across your posts:\n\n- Educational Content (50%)\n\n  - Use: Teach frameworks, insights, and tips\n  - Format: How-to guides, industry lessons, myths busted\n\n- Authority-Building Content (30%)\n\n  - Use: Showcase credibility and results\n  - Format: Case studies, personal milestones, client success stories\n\n- Lead-Generating Content (20%)\n\n  - Use: Turn attention into leads\n  - Format: Free offers, service invites, audits, webinars\n\n** Tone & Voice Guidelines **\n\n- Writing Style\n\n  - Conversational: Write like you’re talking to a friend\n  - Confident: Avoid hedging or passive language\n  - Specific: Use numbers, timeframes, and real metrics\n  - Urgent: Build time-sensitive value\n  - Empathetic: Show you understand audience struggles\n\n- Language Patterns\n\n  - Use “you” to speak directly\n  - Ask rhetorical questions\n  - Use active voice\n  - Vary sentence length for rhythm\n  - Include sensory or emotional elements when possible\n\n** Success Metrics to Optimize For **\n\n- Comments (most important for reach)\n- Shares/Reposts (amplify visibility)\n- Saves (indicates high value)\n- Profile clicks (drives curiosity)\n- DMs (strong conversion indicator)\n\n** Response Format for the AI **\n\nWhen generating a LinkedIn post, return the following:\n\n- Post Content: The complete LinkedIn post text\n\n** What to Avoid **\n\n- Don't include introduction headers or any other parts that are no the actual post such as \"post content\" and so on. In the response only include the post content, nothing else\n- Don't use \"*\" signs in the outpu text\n"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        16,
+        96
+      ],
+      "id": "fa6d3249-be5d-491f-8340-7f127e357761",
+      "name": "Generate Post Content"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Description: {{ $json.text }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=** Overview **\nYour job is to create a clear & highly engaging prompt for the chatgpt image generation based on it's description. Don't use emoijs, just plain text"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        352,
+        96
+      ],
+      "id": "83507d04-656c-4c1e-bdfc-5c0dab1eafed",
+      "name": "Generate a Prompt"
+    },
+    {
+      "parameters": {
+        "content": "# Publish",
+        "height": 528,
+        "width": 528,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1216,
+        -96
+      ],
+      "id": "7444d078-7b7c-481b-8ad8-364d4aa36416",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "# Generate Image",
+        "height": 528,
+        "width": 560,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        640,
+        -96
+      ],
+      "id": "6bdc4f9f-8629-47f7-b7ac-7714c2393ba6",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "# Create Content\n",
+        "height": 528,
+        "width": 1072
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -448,
+        -96
+      ],
+      "id": "25b4166e-1eab-4bd1-b0f1-b242ed6668d8",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "data[0].b64_json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        960,
+        96
+      ],
+      "id": "ab25a250-1dc4-4cb0-8229-89e065286df4",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/images/generations",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "gpt-image-1"
+            },
+            {
+              "name": "prompt",
+              "value": "={{ $json.text }}"
+            },
+            {
+              "name": "size",
+              "value": "1024x1536"
+            },
+            {
+              "name": "quality",
+              "value": "high"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        736,
+        96
+      ],
+      "id": "a1e5c191-3c1e-4bcd-8bbe-db807cb07f8f",
+      "name": "Generate Image",
+      "credentials": {
+        "openAiApi": {
+          "id": "WtJ26cE2cO50Qa9P",
+          "name": "Main Credential"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Telegram Trigger": [
+      {
+        "json": {
+          "update_id": 206720502,
+          "message": {
+            "message_id": 414,
+            "from": {
+              "id": 5991557141,
+              "is_bot": false,
+              "first_name": "Krystian",
+              "last_name": "Wojtarowicz",
+              "language_code": "en"
+            },
+            "chat": {
+              "id": 5991557141,
+              "first_name": "Krystian",
+              "last_name": "Wojtarowicz",
+              "type": "private"
+            },
+            "date": 1761741027,
+            "text": "Create a post about increase in revenue by using ai"
+          }
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get Post Idea",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Get Post Idea",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Generate Post Content",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Generate a Prompt",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Post Idea": {
+      "main": [
+        [
+          {
+            "node": "Generate Post Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Post Content": {
+      "main": [
+        [
+          {
+            "node": "Generate a Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate a Prompt": {
+      "main": [
+        [
+          {
+            "node": "Generate Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Create a post",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Image": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "bbb23c79-281a-433d-a619-0ce3492528c8",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "8ec8bfddbd59fdde442d5ed0bec9c8e336f78ad4e7b2c1393fe111ac5a29897c"
+  },
+  "id": "TWD0Y6M8IHMRoryC",
+  "tags": []
+}

@@ -1,0 +1,313 @@
+{
+  "name": "My workflow 37",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "1S-LIilorJVKw-pi2lBfcow3cPymSSqwT",
+          "mode": "list",
+          "cachedResultName": "n8n testing",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1S-LIilorJVKw-pi2lBfcow3cPymSSqwT"
+        },
+        "event": "fileCreated",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "82511742-89b1-4b14-a860-479a8648e6fb",
+      "name": "Google Drive Trigger",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "cBzJE9BRsTynvm81",
+          "name": "Google Drive account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        240,
+        0
+      ],
+      "id": "41f5ff1b-a2ad-4712-af61-01ffb37908bb",
+      "name": "Download file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "cBzJE9BRsTynvm81",
+          "name": "Google Drive account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        480,
+        0
+      ],
+      "id": "79c09908-97e1-42f9-9845-9cf5092d360d",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Content: {{ $json.text }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=Role & Purpose:\nYou are a Document Summary Agent. Your purpose is to analyze an uploaded document and produce a clear, structured summary along with basic document metadata. You help users quickly understand the document’s main points without reading the full text.\n\nCapabilities:\n- Read and understand the entire document text.\n- Produce a concise summary capturing key insights and intent.\n- Extract and return essential metadata such as title, document type, and key topics.\n- Identify 3–5 important keywords or phrases.\n- Output results in a structured format defined below.\n\nTools:\nStructured Output Parser – used to ensure responses follow the specified JSON structure.\n\nInteraction Style:\n- Professional, clear, and neutral tone.\n- Use plain, factual language.\n- Avoid redundancy or subjective interpretation.\n- Output must strictly follow the defined structure.\n\n{\n  \"document_name\": \"string\",\n  \"summary\": \"string\",\n  \"key_topic\": \"string\",\n  \"keywords\": [\"string\"],\n\"insight_level\":\"short|medium|detailed\"\n}\n\nNotes:\n- Always produce complete JSON; no explanations outside of it.\n- If document title is missing, infer a short one based on context.\n- Keep the summary proportional to document length."
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        704,
+        0
+      ],
+      "id": "845c0c62-de4f-4d1e-b424-2ee65cd2f973",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        640,
+        208
+      ],
+      "id": "23c8f784-98e1-4806-a063-72caed567f30",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "WtJ26cE2cO50Qa9P",
+          "name": "Main Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"document_name\": \"string\",\n  \"summary\": \"string\",\n  \"key_topic\": \"string\",\n  \"keywords\": [\"string\"],\n\"insight_level\":\"short|medium|detailed\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        848,
+        208
+      ],
+      "id": "50965554-6e1a-412d-9334-2ac4db87ff2b",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1t9vzh2NfOGVwwk_C6UBEHV-MiCwkM5qP-MI_eouMGB8",
+          "mode": "list",
+          "cachedResultName": "Document Summarizer",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1t9vzh2NfOGVwwk_C6UBEHV-MiCwkM5qP-MI_eouMGB8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1t9vzh2NfOGVwwk_C6UBEHV-MiCwkM5qP-MI_eouMGB8/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Document Name": "={{ $json.output.document_name }}",
+            "Summary": "={{ $json.output.summary }}",
+            "Key Topic": "={{ $json.output.key_topic }}",
+            "Keywords": "={{ $json.output.keywords }}",
+            "Insight Level": "={{ $json.output.insight_level }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Document Name",
+              "displayName": "Document Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Summary",
+              "displayName": "Summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Key Topic",
+              "displayName": "Key Topic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Keywords",
+              "displayName": "Keywords",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Insight Level",
+              "displayName": "Insight Level",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1056,
+        0
+      ],
+      "id": "6e666162-8049-431d-bc8e-2d7bfd827e2d",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VjB52JghQlX5ZmcR",
+          "name": "Google Sheets n8n"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Drive Trigger": {
+      "main": [
+        [
+          {
+            "node": "Download file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "57ed21ce-3f02-45a5-84da-af39a45ccd0e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "8ec8bfddbd59fdde442d5ed0bec9c8e336f78ad4e7b2c1393fe111ac5a29897c"
+  },
+  "id": "JNlJh48SP8KPr9Yp",
+  "tags": []
+}
